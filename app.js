@@ -1,3 +1,4 @@
+/*jshint node: true*/
 const createError = require('http-errors');
 const express = require('express');
 const compression = require('compression');
@@ -13,15 +14,19 @@ const sass = require('node-sass-middleware');
 const MongoStore = require('connect-mongo')(session);
 
 
-const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
-
 const app = express();
 
 /**
  * Load environment variables from .env file, where API keys and passwords are configured.
  */
 dotenv.load({ path: '.env' });
+
+/**
+ * Controllers (route handlers).
+ */
+const homeController = require('./controllers/home');
+const userController = require('./controllers/user');
+const contactController = require('./controllers/contact');
 
 
 // view engine setup
@@ -63,6 +68,11 @@ app.use('/js/lib', express.static(path.join(__dirname, 'node_modules/popper.js/d
 app.use('/js/lib', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/js'), { maxAge: 31557600000 }));
 app.use('/js/lib', express.static(path.join(__dirname, 'node_modules/jquery/dist'), { maxAge: 31557600000 }));
 app.use('/webfonts', express.static(path.join(__dirname, 'node_modules/@fortawesome/fontawesome-free/webfonts'), { maxAge: 31557600000 }));
+
+/**
+ * Primary app routes.
+ */
+app.get('/', homeController.index);
 
 
 // catch 404 and forward to error handler
